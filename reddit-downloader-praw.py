@@ -12,17 +12,18 @@ RESPONSE_OK = 200
 MIN_KARMA = 35
 chunk_size = 4096
 number_of_posts = 1000
-NO_OF_SUBREDDITS = 3
+NO_OF_SUBREDDITS = 50
 TESTING = False
 NO_SAVE = False
 INPUT_FILE = "all_links.txt"
-#DIR = "general"
+DIR = "general"
 
 subreddits = []
 images = []
 saved_files = []
 
-# Read the file
+# Read the file (for now)
+# In future, read directly from reddit or command line
 # Depending on the type, download image and save it
 
 def saveImage(url, subreddit, filename):
@@ -34,10 +35,12 @@ def saveImage(url, subreddit, filename):
 			# if status is ok, then save the image
 			filename = subreddit + "/" + filename
 			print "Saving as %s" %(filename)
-			with open(filename, 'wb') as fd:
-				for chunk in r.iter_content(chunk_size):
-					fd.write(chunk)
-
+			try:
+				with open(filename, 'wb') as fd:
+					for chunk in r.iter_content(chunk_size):
+						fd.write(chunk)
+			except:
+				pass
 
 def get_urls(sr_to_process):
 	# Read the url links
@@ -46,7 +49,7 @@ def get_urls(sr_to_process):
 		sr_to_process = sr_to_process - 1
 		subreddits.append(line.rstrip('\n'))
 		if sr_to_process <= 0:
-			break
+				break
 	fp_input.close()
 
 
@@ -121,11 +124,14 @@ for each_subreddit in subreddits:
 			name = submission.url.split('/')[-1]
 			gyfcat_url_query = "http://gfycat.com/cajax/get/" + name
 			r = requests.get(gyfcat_url_query)
-			if r.status_code == RESPONSE_OK:
-				r_json = r.json()
-				url = r_json['gfyItem']['mp4Url']
-   				filename = long_filename(each_subreddit, url)
- 				saveImage(url, each_subreddit, filename)
+			try:
+				if r.status_code == RESPONSE_OK:
+					r_json = r.json()
+					url = r_json['gfyItem']['mp4Url']
+					filename = long_filename(each_subreddit, url)
+					saveImage(url, each_subreddit, filename)
+			except:
+				pass
 		# Tumbler and others. See if extension is a gif, if so, try and save
 		elif 'gif' in submission.url:
 			name = submission.url.split('/')[-1]

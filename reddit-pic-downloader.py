@@ -12,7 +12,7 @@ DL_LIMIT = 5
  
 #get json object from imgur gallery. can be appended with /month or /week for
 # more recent entries
-r = requests.get(r'http://imgur.com/r/scarlettjohansson/top.json')
+r = requests.get(r'http://imgur.com/r/pics/top.json')
 #creates a python dict from the JSON object
 j = json.loads(r.text)
  
