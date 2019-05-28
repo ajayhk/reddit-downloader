@@ -107,7 +107,7 @@ for each_subreddit in subreddits:
 			del images[:]
 		# Not album
 		elif 'imgur.com/' in submission.url:
-         # This is an Imgur page with a single image.
+         	# This is an Imgur page with a single image.
 			url = vars(submission)['url']
  			last_word = url.split('/')[-1]
  			ext = last_word.split('.')[-1]
@@ -143,6 +143,18 @@ for each_subreddit in subreddits:
 		 				saveImage(url, each_subreddit, filename)		
 				except:
 					continue
+		elif 'redd.it/' in submission.url:
+         	# This is a reddit image
+			url = vars(submission)['url']
+ 			last_word = url.split('/')[-1]
+ 			ext = last_word.split('.')[-1]
+	 		website = url.split('/')[2]
+	 		if not ext or ext == last_word:
+ 			 	url = url + ".jpg"
+	 		r = requests.get(url)
+ 			if r.status_code == RESPONSE_OK:
+	 			filename = long_filename(each_subreddit, url)
+				saveImage(url, each_subreddit, filename)
 		else: 
 			# what are not covered
 			print submission.url
